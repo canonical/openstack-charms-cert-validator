@@ -1,0 +1,27 @@
+name: openstack-charms-cert-validator
+summary: Validate an ssl cert chain for openstack charms.
+description: |
+  TODO
+version: "0.1"
+grade: stable
+confinement: strict
+base: core22
+architectures:
+  - build-on:
+    - amd64
+
+apps:
+  openstack-charms-cert-validator:
+    command: bin/openstack-charms-cert-validator
+    environment:
+      PYTHONPATH: $SNAP
+    plugs: [home, removable-media]
+
+parts:
+  validatecert:
+    plugin: nil
+    source: .
+    build-packages:
+      - python3-pip
+    override-build: |
+      pip install -t $CRAFT_PART_INSTALL .
