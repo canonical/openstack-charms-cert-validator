@@ -81,6 +81,7 @@ def validate(
 
     Return True if no validation errors, otherwise False.
     """
+    valid = True
     end_entity_cert = None
     intermediates: List[bytes] = []
     with open(cert_path, "rb") as f:
@@ -123,9 +124,9 @@ def validate(
         else:
             validator.validate_usage(set(["digital_signature"]), set(["server_auth"]))
         print("OK: SSL certificate validation passed.")
-        return True
     except Exception as e:
         print("ERROR: {}".format(e))
+        valid = False
 
     if (
         cert_modulus_digest
@@ -136,8 +137,9 @@ def validate(
             "\nERROR: modulus of the SSL certificate and key didn't match. "
             "Please double check if the cert and key pair is valid."
         )
+        valid = False
 
-    return False
+    return valid
 
 
 def main() -> NoReturn:

@@ -3,6 +3,8 @@
 check-prereqs:
 	@printf "%s black\n" $$(which black >/dev/null && echo "[OK]" || echo "[MISSING]")
 	@printf "%s snapcraft\n" $$(which snapcraft >/dev/null && echo "[OK]" || echo "[MISSING]")
+	@printf "%s coverage\n" $$(which coverage >/dev/null && echo "[OK]" || echo "[MISSING]")
+	@printf "%s python\n" $$(which python >/dev/null && echo "[OK]" || echo "[MISSING]")
 
 format:
 	black *.py
@@ -13,7 +15,10 @@ check-format:
 lint:
 	mypy openstack_charms_cert_validator.py
 
-test: check-format lint
+test: check-prereqs check-format lint
+	coverage erase
+	./tests/func-tests.sh
+	coverage html
 
 snap:
 	snapcraft

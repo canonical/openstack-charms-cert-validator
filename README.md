@@ -56,7 +56,7 @@ Create a virtual environment and install as editable with pip:
 ```
 python -m venv venv
 source venv/bin/activate
-pip install -e .
+pip install -e '.[dev]'
 ```
 
 Then run as:

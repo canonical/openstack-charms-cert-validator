@@ -9,6 +9,10 @@ dependencies = [
 ]
 dynamic = ["version", "description"]
 
+[project.optional-dependencies]
+dev = [
+    "coverage"
+]
 
 [project.scripts]
 openstack-charms-cert-validator = "openstack_charms_cert_validator:main"
