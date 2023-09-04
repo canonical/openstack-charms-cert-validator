@@ -5,6 +5,7 @@ check-prereqs:
 	@printf "%s snapcraft\n" $$(which snapcraft >/dev/null && echo "[OK]" || echo "[MISSING]")
 	@printf "%s coverage\n" $$(which coverage >/dev/null && echo "[OK]" || echo "[MISSING]")
 	@printf "%s python\n" $$(which python >/dev/null && echo "[OK]" || echo "[MISSING]")
+	@printf "%s in a virtual env\n" $$([ -n "$$VIRTUAL_ENV" ] && echo "[OK]" || echo "[MISSING]")
 
 format:
 	black *.py
