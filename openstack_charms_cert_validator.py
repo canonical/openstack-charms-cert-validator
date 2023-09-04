@@ -7,20 +7,18 @@
 
 """
 $ openstack-charms-cert-validator -h
-usage: openstack-charms-cert-validator [-h] --cert CERT [--key KEY] [--ca CA] [hostname ...]
+usage: openstack-charms-cert-validator [-h] [--key KEY] [--ca CA] cert [hostname ...]
 
-Validate X.509 Certificate Path/Chain
+Validate X.509 certificate path/chain, for Openstack charms
 
 positional arguments:
-  hostname     Hostname to be checked against the certificate. Multiple hostnames can be passed.
+  cert        SSL certificate file. Expected format is mod_ssl's SSLCertificateFile. Please refer to: https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcertificatefile
+  hostname    Hostname to be checked against the certificate. Multiple hostnames can be passed.
 
 options:
-  -h, --help   show this help message and exit
-  --cert CERT  SSL certificate file. Expected format is mod_ssl's SSLCertificateFile. Please refer to:
-               https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcertificatefile
-  --key KEY    SSL certificate key file. No check will be made if it is not RSA key.
-  --ca CA      SSL CA file
-
+  -h, --help  show this help message and exit
+  --key KEY   SSL certificate key file. No check will be made if it is not RSA key.
+  --ca CA     SSL CA file
 """
 __version__ = "0.1"
 
@@ -62,9 +60,7 @@ def rsa_key_modulus_digest_sha256(der_bytes):
         if algorithm != "rsa":
             return
     except ValueError:
-        print(
-            'WARNING: Failed to get key_info["private_key_algorithm"]["algorithm"]'
-        )
+        print('WARNING: Failed to get key_info["private_key_algorithm"]["algorithm"]')
         return
     key = key_info["private_key"].parsed
     modulus = str(key["modulus"].native)
@@ -108,6 +104,7 @@ def validate(cert_path, key_path, ca_path, hostnames):
     )
 
     try:
+        # TODO: document why only one or the other (validate tls with hostname or validate usage)
         if hostnames:
             for hostname in hostnames:
                 validator.validate_tls(hostname=hostname)
@@ -130,11 +127,10 @@ def validate(cert_path, key_path, ca_path, hostnames):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Validate X.509 Certificate Path/Chain"
+        description="Validate X.509 certificate path/chain, for Openstack charms"
     )
     parser.add_argument(
-        "--cert",
-        required=True,
+        "cert",
         help=(
             "SSL certificate file. Expected format is mod_ssl's SSLCertificateFile. "
             "Please refer to: https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcertificatefile"
@@ -154,9 +150,9 @@ def main():
     )
     args = parser.parse_args()
     validate(
-        cert_path=args.ssl_cert,
-        key_path=args.ssl_key,
-        ca_path=args.ssl_ca,
+        cert_path=args.cert,
+        key_path=args.key,
+        ca_path=args.ca,
         hostnames=args.hostname,
     )
 

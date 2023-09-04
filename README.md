@@ -10,6 +10,45 @@ openssl verify -CAfile ca.crt -untrusted intermediate.crt leaf.crt
 
 But more user-friendly errors.
 
+## Usage
+
+```
+$ openstack-charms-cert-validator -h
+usage: openstack-charms-cert-validator [-h] [--key KEY] [--ca CA] cert [hostname ...]
+
+Validate X.509 certificate path/chain, for Openstack charms
+
+positional arguments:
+  cert        SSL certificate file. Expected format is mod_ssl's SSLCertificateFile. Please refer to: https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcertificatefile
+  hostname    Hostname to be checked against the certificate. Multiple hostnames can be passed.
+
+options:
+  -h, --help  show this help message and exit
+  --key KEY   SSL certificate key file. No check will be made if it is not RSA key.
+  --ca CA     SSL CA file
+```
+
+Example valid certificate:
+
+```
+$ openstack-charms-cert-validator --ca ca.crt cert.crt
+[ssl_cert]
+
+subject=Common Name: localhost
+subject_alt_name=['localhost']
+issuer=Common Name: Localhost Intermediate CA, Organization: Localhost
+
+subject=Common Name: Localhost Intermediate CA, Organization: Localhost
+issuer=Common Name: Localhost Root CA, Organization: Localhost
+
+[ssl_ca]
+
+subject=Common Name: Localhost Root CA, Organization: Localhost
+issuer=Common Name: Localhost Root CA, Organization: Localhost
+
+OK: SSL certificate validation passed.
+```
+
 ## Development
 
 Create a virtual environment and install as editable with pip:
@@ -47,8 +86,9 @@ It can also be installed as a snap from the configuration provided.
 
 ```
 snapcraft
-# it is strictly confined, but dangerous flag required for local snaps
-sudo snap install ./openstack-charms-cert-validator_*_amd64.snap --dangerous
+# dangerous flag is required for local unsigned snaps,
+# and it's an unconfined snap so it can access system ca certificate paths
+sudo snap install ./openstack-charms-cert-validator_*_amd64.snap --dangerous --classic
 ```
 
 ## License

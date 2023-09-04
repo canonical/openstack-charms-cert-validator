@@ -1,10 +1,10 @@
 name: openstack-charms-cert-validator
 summary: Validate an ssl cert chain for openstack charms.
 description: |
-  TODO
+  A small tool to validate an SSL certificate chain for openstack charms.
 version: "0.1"
 grade: stable
-confinement: strict
+confinement: classic
 base: core22
 architectures:
   - build-on:
@@ -15,7 +15,6 @@ apps:
     command: bin/openstack-charms-cert-validator
     environment:
       PYTHONPATH: $SNAP
-    plugs: [home, removable-media]
 
 parts:
   validatecert:
