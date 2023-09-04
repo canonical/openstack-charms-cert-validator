@@ -24,12 +24,14 @@ __version__ = "0.1"
 
 import argparse
 import hashlib
+import sys
+from typing import List, NoReturn, Optional
 
-from asn1crypto import keys, pem, x509
-from certvalidator import CertificateValidator, ValidationContext
+from asn1crypto import keys, pem, x509  # type: ignore
+from certvalidator import CertificateValidator, ValidationContext  # type: ignore
 
 
-def show_human_friendly_header(der_bytes, modulus_digest=None):
+def show_human_friendly_header(der_bytes: bytes, modulus_digest=None) -> None:
     cert = x509.Certificate.load(der_bytes)
     print("subject={}".format(cert.subject.human_friendly))
     if cert.subject_alt_name_value:
@@ -39,38 +41,48 @@ def show_human_friendly_header(der_bytes, modulus_digest=None):
     print("issuer={}\n".format(cert.issuer.human_friendly))
 
 
-def rsa_cert_modulus_digest_sha256(der_bytes):
+def rsa_cert_modulus_digest_sha256(der_bytes: bytes) -> Optional[str]:
     cert = x509.Certificate.load(der_bytes)
     tbs_certificate = cert["tbs_certificate"]
     subject_public_key_info = tbs_certificate["subject_public_key_info"]
     subject_public_key_algorithm = subject_public_key_info["algorithm"]
     if subject_public_key_algorithm["algorithm"].native != "rsa":
         # https://security.stackexchange.com/a/73131
-        return
+        return None
     subject_public_key = subject_public_key_info["public_key"].parsed
     modulus = str(subject_public_key["modulus"].native)
     modulus_digest_sha256 = hashlib.sha256(modulus.encode()).hexdigest()
     return modulus_digest_sha256
 
 
-def rsa_key_modulus_digest_sha256(der_bytes):
+def rsa_key_modulus_digest_sha256(der_bytes: bytes) -> Optional[str]:
     key_info = keys.PrivateKeyInfo.load(der_bytes)
     try:
         algorithm = key_info["private_key_algorithm"]["algorithm"].native
         if algorithm != "rsa":
-            return
+            return None
     except ValueError:
         print('WARNING: Failed to get key_info["private_key_algorithm"]["algorithm"]')
-        return
+        return None
     key = key_info["private_key"].parsed
     modulus = str(key["modulus"].native)
     modulus_digest_sha256 = hashlib.sha256(modulus.encode()).hexdigest()
     return modulus_digest_sha256
 
 
-def validate(cert_path, key_path, ca_path, hostnames):
+def validate(
+    cert_path: str,
+    key_path: Optional[str],
+    ca_path: Optional[str],
+    hostnames: Optional[List[str]],
+) -> bool:
+    """
+    Validate the certificate
+
+    Return True if no validation errors, otherwise False.
+    """
     end_entity_cert = None
-    intermediates = []
+    intermediates: List[bytes] = []
     with open(cert_path, "rb") as f:
         print("[ssl_cert]\n")
         for _, _, der_bytes in pem.unarmor(f.read(), multiple=True):
@@ -111,6 +123,7 @@ def validate(cert_path, key_path, ca_path, hostnames):
         else:
             validator.validate_usage(set(["digital_signature"]), set(["server_auth"]))
         print("OK: SSL certificate validation passed.")
+        return True
     except Exception as e:
         print("ERROR: {}".format(e))
 
@@ -124,8 +137,15 @@ def validate(cert_path, key_path, ca_path, hostnames):
             "Please double check if the cert and key pair is valid."
         )
 
+    return False
 
-def main():
+
+def main() -> NoReturn:
+    """
+    Main function to perform validation.
+
+    Never returns, as it calls sys.exit with a code indicating validation success or failure.
+    """
     parser = argparse.ArgumentParser(
         description="Validate X.509 certificate path/chain, for Openstack charms"
     )
@@ -149,12 +169,13 @@ def main():
         ),
     )
     args = parser.parse_args()
-    validate(
+    valid = validate(
         cert_path=args.cert,
         key_path=args.key,
         ca_path=args.ca,
         hostnames=args.hostname,
     )
+    sys.exit(1 if not valid else 0)
 
 
 if __name__ == "__main__":

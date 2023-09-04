@@ -54,9 +54,6 @@ OK: SSL certificate validation passed.
 Create a virtual environment and install as editable with pip:
 
 ```
-make develop
-
-# equivalent to:
 python -m venv venv
 source venv/bin/activate
 pip install -e .
