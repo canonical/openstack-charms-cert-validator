@@ -33,6 +33,7 @@ apps:
     command: bin/openstack-charms-cert-validator
     plugs:
       - home
+      - network
     environment:
       PYTHONPATH: $SNAP
 
