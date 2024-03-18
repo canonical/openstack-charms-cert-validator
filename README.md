@@ -1,5 +1,7 @@
 # openstack-charms-cert-validator
 
+**NOTE: this is an internal project used for debugging, not an official product of Canonical**
+
 A small tool to validate an SSL certificate chain for openstack charms.
 
 Kind of like:
