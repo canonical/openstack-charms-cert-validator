@@ -61,9 +61,8 @@ Or the snap can be built and installed from the source:
 
 ```
 snapcraft
-# dangerous flag is required for local unsigned snaps,
-# and it's an unconfined snap so it can access system ca certificate paths
-sudo snap install ./openstack-charms-cert-validator_*_amd64.snap --dangerous --classic
+# dangerous flag is required for local unsigned snaps
+sudo snap install ./openstack-charms-cert-validator_*_amd64.snap --dangerous
 ```
 
 This is also a standard python project that can be installed with pip:
