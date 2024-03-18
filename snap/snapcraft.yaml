@@ -3,27 +3,13 @@ summary: Validate an ssl cert chain for openstack charms
 description: |
   A small tool to validate an SSL certificate chain for openstack charms.
 
-  ```
-  $ openstack-charms-cert-validator -h
-  usage: openstack-charms-cert-validator [-h] [--key KEY] [--ca CA] cert [hostname ...]
-
-  Validate X.509 certificate path/chain, for Openstack charms
-
-  positional arguments:
-    cert        SSL certificate file. Expected format is mod_ssl's SSLCertificateFile. Please refer to: https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslcertificatefile
-    hostname    Hostname to be checked against the certificate. Multiple hostnames can be passed.
-
-  options:
-    -h, --help  show this help message and exit
-    --key KEY   SSL certificate key file. No check will be made if it is not RSA key.
-    --ca CA     SSL CA file
-  ```
+  Docs available at https://github.com/canonical/openstack-charms-cert-validator
 version: "0.1"
 license: GPL-3.0
 grade: stable
 confinement: strict
 base: core22
-source-code: https://git.launchpad.net/~swalladge/+git/openstack-charms-cert-validator/
+source-code: https://github.com/canonical/openstack-charms-cert-validator
 architectures:
   - build-on:
     - amd64

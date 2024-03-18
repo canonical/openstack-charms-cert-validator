@@ -49,6 +49,29 @@ issuer=Common Name: Localhost Root CA, Organization: Localhost
 OK: SSL certificate validation passed.
 ```
 
+## Installation
+
+There is a snap available from the snap store:
+
+```
+sudo snap install openstack-charms-cert-validator
+```
+
+Or the snap can be built and installed from the source:
+
+```
+snapcraft
+# dangerous flag is required for local unsigned snaps,
+# and it's an unconfined snap so it can access system ca certificate paths
+sudo snap install ./openstack-charms-cert-validator_*_amd64.snap --dangerous --classic
+```
+
+This is also a standard python project that can be installed with pip:
+
+```
+pip install git+https://github.com/canonical/openstack-charms-cert-validator
+```
+
 ## Development
 
 Create a virtual environment and install as editable with pip:
@@ -74,19 +97,6 @@ There is also a snapcraft config file, so you can build a snap with:
 snapcraft
 ```
 
-## Installation
-
-This is a standard python project - see the pyproject.toml file.
-Install as usual with pip or however you prefer.
-
-It can also be installed as a snap from the configuration provided.
-
-```
-snapcraft
-# dangerous flag is required for local unsigned snaps,
-# and it's an unconfined snap so it can access system ca certificate paths
-sudo snap install ./openstack-charms-cert-validator_*_amd64.snap --dangerous --classic
-```
 
 ## License
 
